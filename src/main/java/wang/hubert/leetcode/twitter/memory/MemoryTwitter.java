@@ -66,6 +66,9 @@ public class MemoryTwitter implements Twitter{
         List<Tweet> result = new ArrayList<>(latestFeedsCount);
 
         for (int i = 0; i < latestFeedsCount; i++) {
+            if (maxHeap.isEmpty()) {
+                break;
+            }
             result.add(maxHeap.poll());
         }
 
