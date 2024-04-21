@@ -1,7 +1,6 @@
 package wang.hubert.leetcode;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 import wang.hubert.leetcode.twitter.Twitte;
 import wang.hubert.leetcode.twitter.Twitter;
