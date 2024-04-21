@@ -10,7 +10,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import wang.hubert.leetcode.twitter.Twitte;
+import wang.hubert.leetcode.twitter.Tweet;
 import wang.hubert.leetcode.twitter.Twitter;
 
 public class TopKTwitte implements Twitter{
@@ -18,7 +18,7 @@ public class TopKTwitte implements Twitter{
     /**
      * 推文
      */
-    private Map<Integer, LinkedList<Twitte>> twittes;
+    private Map<Integer, LinkedList<Tweet>> tweets;
 
     /**
      * 关注
@@ -27,12 +27,10 @@ public class TopKTwitte implements Twitter{
 
 
     private int topK;
-    
-    private static final AtomicInteger twitteOrder = new AtomicInteger();
 
 
     public TopKTwitte(int topK) {
-        this.twittes = new HashMap<Integer, LinkedList<Twitte>>();
+        this.tweets = new HashMap<Integer, LinkedList<Tweet>>();
         this.followings = new HashMap<>();
         this.topK = topK;
     }
@@ -40,41 +38,40 @@ public class TopKTwitte implements Twitter{
 
 
     @Override
-    public void postTweet(Twitte twitte) {
-        twitte.setTimestamp(twitteOrder.incrementAndGet());
-        LinkedList<Twitte> linkedTwittes = twittes.get(twitte.getUserId());
-        if (linkedTwittes == null) {
-            linkedTwittes = new LinkedList<>();
-            twittes.put(twitte.getUserId(), linkedTwittes);
+    public void postTweet(Tweet twitte) {
+        LinkedList<Tweet> linkedtweets = tweets.get(twitte.getUserId());
+        if (linkedtweets == null) {
+            linkedtweets = new LinkedList<>();
+            tweets.put(twitte.getUserId(), linkedtweets);
         }
-        if (linkedTwittes.size() > topK) {
-            linkedTwittes.removeFirst();
+        if (linkedtweets.size() > topK) {
+            linkedtweets.removeFirst();
         }
-        linkedTwittes.addLast(twitte);
+        linkedtweets.addLast(twitte);
     }
 
     @Override
-    public List<Twitte> getNewsFeed(int userId, int latestFeedsCount) {
+    public List<Tweet> getNewsFeed(int userId, int latestFeedsCount) {
         if (latestFeedsCount > topK) {
             throw new UnsupportedOperationException("latestFeedsCount overflow the topKSize");
         }
-        PriorityQueue<Twitte> maxHeap = new PriorityQueue<>(topK, (o1, o2) -> o2.getTimestamp() - o1.getTimestamp());
+        PriorityQueue<Tweet> maxHeap = new PriorityQueue<>(topK, (o1, o2) -> o2.getTimestamp() - o1.getTimestamp());
         
-        if (twittes.containsKey(userId)) {
-            LinkedList<Twitte> linkedTwitte = twittes.get(userId);
+        if (tweets.containsKey(userId)) {
+            LinkedList<Tweet> linkedTwitte = tweets.get(userId);
             linkedTwitte.forEach(tw -> maxHeap.offer(tw));
         }
 
         Set<Integer> followeeIds = followings.get(userId);
         if (followeeIds != null && followeeIds.size() > 0) {
             followeeIds.forEach(followeeId -> {
-                if (twittes.containsKey(followeeId)) {
-                    twittes.get(followeeId).forEach(tw -> maxHeap.offer(tw));
+                if (tweets.containsKey(followeeId)) {
+                    tweets.get(followeeId).forEach(tw -> maxHeap.offer(tw));
                 }
             });
         }
         
-        List<Twitte> result = new ArrayList<>();
+        List<Tweet> result = new ArrayList<>();
         for (int i = 0; i < latestFeedsCount; i++) {
             result.add(maxHeap.poll());
         }

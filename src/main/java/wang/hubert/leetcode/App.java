@@ -2,8 +2,12 @@ package wang.hubert.leetcode;
 
 import java.util.List;
 
-import wang.hubert.leetcode.twitter.Twitte;
+import wang.hubert.leetcode.twitter.Tweet;
+import wang.hubert.leetcode.twitter.TweetIdGenerator;
+import wang.hubert.leetcode.twitter.TweetTimestampGenerator;
 import wang.hubert.leetcode.twitter.Twitter;
+import wang.hubert.leetcode.twitter.generator.AtomicTweetIdGenerator;
+import wang.hubert.leetcode.twitter.generator.AtomicTweetTimestampGenerator;
 import wang.hubert.leetcode.twitter.memory.MemoryTwitter;
 import wang.hubert.leetcode.twitter.topk.TopKTwitte;
 
@@ -16,6 +20,8 @@ public class App
     public static void main( String[] args )
     {
         Twitter twitter = new MemoryTwitter();
+        TweetIdGenerator tweetIdGenerator = new AtomicTweetIdGenerator();
+        TweetTimestampGenerator timestampGenerator = new AtomicTweetTimestampGenerator();
 
         for (int i = 0; i < 10; i++) {
             Integer userId = i + 1;
@@ -23,7 +29,7 @@ public class App
             for (int j = 1; j <= 10; j++) {
                 String content = userId + "->" + "conent" + ":" + j;
                 System.out.println(content);
-                twitter.postTweet(new Twitte(userId, content));
+                twitter.postTweet(new Tweet(userId, content, tweetIdGenerator, timestampGenerator));
             }
 
         }
@@ -33,9 +39,9 @@ public class App
         twitter.follow(1, 4);
 
 
-        List<Twitte> twittes = twitter.getNewsFeed(1, 10);
+        List<Tweet> twittes = twitter.getNewsFeed(1, 10);
         System.out.println("******************************feeds**************************");
-        for (Twitte twitte : twittes) {
+        for (Tweet twitte : twittes) {
             System.out.println(twitte.getContent());
         }
         
@@ -47,7 +53,7 @@ public class App
             for (int j = 1; j <= 10; j++) {
                 String content = userId + "->" + "conent" + ":" + j;
                 System.out.println(content);
-                twitter.postTweet(new Twitte(userId, content));
+                twitter.postTweet(new Tweet(userId, content, tweetIdGenerator, timestampGenerator));
             }
 
         }
@@ -59,7 +65,7 @@ public class App
 
         twittes = twitter.getNewsFeed(1, 10);
         System.out.println("******************************feeds**************************");
-        for (Twitte twitte : twittes) {
+        for (Tweet twitte : twittes) {
             System.out.println(twitte.getContent());
         }
     }

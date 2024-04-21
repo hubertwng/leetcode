@@ -9,7 +9,7 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import wang.hubert.leetcode.twitter.Twitte;
+import wang.hubert.leetcode.twitter.Tweet;
 import wang.hubert.leetcode.twitter.Twitter;
 
 public class MemoryTwitter implements Twitter{
@@ -17,12 +17,7 @@ public class MemoryTwitter implements Twitter{
     /**
      * 推文列表，每个用户发布的推文
      */
-    private Map<Integer, LinkedTwitte> twittes;
-
-    /**
-     * 全局时间序列
-     */
-    private static final AtomicInteger twitteOrder = new AtomicInteger();
+    private Map<Integer, LinkedTweet> tweets;
 
     /**
      * 关注列表
@@ -31,45 +26,44 @@ public class MemoryTwitter implements Twitter{
 
     public MemoryTwitter() {
         this.followings = new HashMap<>();
-        this.twittes = new HashMap<>();
+        this.tweets = new HashMap<>();
     }
 
 
     @Override
-    public void postTweet(Twitte twitte) {
-        twitte.setTimestamp(twitteOrder.incrementAndGet());
-        LinkedTwitte linkedTwitte = twittes.get(twitte.getUserId());
+    public void postTweet(Tweet twitte) {
+        LinkedTweet linkedTwitte = tweets.get(twitte.getUserId());
         if (linkedTwitte == null) {
-            twittes.put(twitte.getUserId(), new LinkedTwitte(twitte));
+            tweets.put(twitte.getUserId(), new LinkedTweet(twitte));
         } else {
-            twittes.put(twitte.getUserId(), new LinkedTwitte(twitte, linkedTwitte));
+            tweets.put(twitte.getUserId(), new LinkedTweet(twitte, linkedTwitte));
         }
         
     }
 
     @Override
-    public List<Twitte> getNewsFeed(int userId, int latestFeedsCount) {
-        PriorityQueue<Twitte> maxHeap = new PriorityQueue<>(latestFeedsCount, (o1, o2) -> o2.getTimestamp() - o1.getTimestamp());
+    public List<Tweet> getNewsFeed(int userId, int latestFeedsCount) {
+        PriorityQueue<Tweet> maxHeap = new PriorityQueue<>(latestFeedsCount, (o1, o2) -> o2.getTimestamp() - o1.getTimestamp());
         
-        if (twittes.containsKey(userId)) {
-            LinkedTwitte linkedTwitte = twittes.get(userId);
+        if (tweets.containsKey(userId)) {
+            LinkedTweet linkedTwitte = tweets.get(userId);
             while (linkedTwitte != null) {
-                maxHeap.offer(linkedTwitte.getTwitte());
+                maxHeap.offer(linkedTwitte.getTweet());
                 linkedTwitte = linkedTwitte.getNext();
             }
         }
         Set<Integer> followees = followings.get(userId);
         if (followees != null && followees.size() > 0) {
             for (Integer followeeId : followees) {
-                LinkedTwitte linkedTwitte = twittes.get(followeeId);
+                LinkedTweet linkedTwitte = tweets.get(followeeId);
                 while (linkedTwitte != null) {
-                    maxHeap.offer(linkedTwitte.getTwitte());
+                    maxHeap.offer(linkedTwitte.getTweet());
                     linkedTwitte = linkedTwitte.getNext();
                 }
             }
         }
 
-        List<Twitte> result = new ArrayList<>(latestFeedsCount);
+        List<Tweet> result = new ArrayList<>(latestFeedsCount);
 
         for (int i = 0; i < latestFeedsCount; i++) {
             result.add(maxHeap.poll());

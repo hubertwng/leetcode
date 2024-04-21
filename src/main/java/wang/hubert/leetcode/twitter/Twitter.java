@@ -7,7 +7,7 @@ public interface Twitter {
      * 发一篇推文
      * @param twitte
      */
-    void postTweet(Twitte twitte);
+    void postTweet(Tweet twitte);
 
     /**
      * 获取最新的多少条推文
@@ -15,7 +15,7 @@ public interface Twitter {
      * @param latestFeedsCount 最新的多少条推文
      * @return
      */
-    List<Twitte> getNewsFeed(int userId, int latestFeedsCount);
+    List<Tweet> getNewsFeed(int userId, int latestFeedsCount);
 
     /**
      * 关注某人
