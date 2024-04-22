@@ -1,8 +1,8 @@
-package wang.hubert.leetcode.twitter.generator;
+package wang.hubert.leetcode.design.twitter.generator;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import wang.hubert.leetcode.twitter.TweetTimestampGenerator;
+import wang.hubert.leetcode.design.twitter.TweetTimestampGenerator;
 
 public class AtomicTweetTimestampGenerator implements TweetTimestampGenerator{
     private static final AtomicInteger generator = new AtomicInteger();

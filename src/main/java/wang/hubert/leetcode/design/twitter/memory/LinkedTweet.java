@@ -1,6 +1,6 @@
-package wang.hubert.leetcode.twitter.memory;
+package wang.hubert.leetcode.design.twitter.memory;
 
-import wang.hubert.leetcode.twitter.Tweet;
+import wang.hubert.leetcode.design.twitter.Tweet;
 
 public class LinkedTweet {
     /**

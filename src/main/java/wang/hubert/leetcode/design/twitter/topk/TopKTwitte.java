@@ -1,4 +1,4 @@
-package wang.hubert.leetcode.twitter.topk;
+package wang.hubert.leetcode.design.twitter.topk;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -10,8 +10,8 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import wang.hubert.leetcode.twitter.Tweet;
-import wang.hubert.leetcode.twitter.Twitter;
+import wang.hubert.leetcode.design.twitter.Tweet;
+import wang.hubert.leetcode.design.twitter.Twitter;
 
 public class TopKTwitte implements Twitter{
 

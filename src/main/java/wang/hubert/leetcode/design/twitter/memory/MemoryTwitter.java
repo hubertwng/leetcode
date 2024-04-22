@@ -1,4 +1,4 @@
-package wang.hubert.leetcode.twitter.memory;
+package wang.hubert.leetcode.design.twitter.memory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,8 +9,8 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import wang.hubert.leetcode.twitter.Tweet;
-import wang.hubert.leetcode.twitter.Twitter;
+import wang.hubert.leetcode.design.twitter.Tweet;
+import wang.hubert.leetcode.design.twitter.Twitter;
 
 public class MemoryTwitter implements Twitter{
     

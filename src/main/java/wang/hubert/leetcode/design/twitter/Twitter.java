@@ -1,4 +1,4 @@
-package wang.hubert.leetcode.twitter;
+package wang.hubert.leetcode.design.twitter;
 
 import java.util.List;
 
