@@ -13,7 +13,7 @@ public class TimeWindowCounterCircuitBreakderTest {
         CircuitBreakerConfig config = new CircuitBreakerConfig();
         config.setFailureThreshold(10);
         config.setTimeout(1000);
-        CircuitBreaker breaker = new CounterCircuitBreaker(config, new TimeWindowCounter(60000));
+        CircuitBreaker breaker = new CounterCircuitBreaker(config, new TimeWindowCounter(1000));
 
         for (int i = 0; i < 200; i++) {
             try {
