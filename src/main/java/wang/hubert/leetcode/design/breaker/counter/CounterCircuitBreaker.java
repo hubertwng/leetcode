@@ -1,7 +1,5 @@
 package wang.hubert.leetcode.design.breaker.counter;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import wang.hubert.leetcode.design.breaker.CircuitBreaker;
 import wang.hubert.leetcode.design.breaker.CircuitBreakerConfig;
 import wang.hubert.leetcode.design.breaker.CircuitBreakerState;
@@ -15,12 +13,12 @@ public class CounterCircuitBreaker implements CircuitBreaker{
 
     private CircuitBreakerConfig circuitBreakerConfig;
 
-    private AtomicInteger failureCount;;
+    private EventCounter failureCounter;;
 
     private long lastFailureTime;
 
-    public CounterCircuitBreaker(CircuitBreakerConfig config) {
-        this.failureCount= new AtomicInteger(0);
+    public CounterCircuitBreaker(CircuitBreakerConfig config, EventCounter failureCounter) {
+        this.failureCounter = failureCounter;
         this.lastFailureTime = 0;
         this.circuitBreakerState = new ClosedCircuitBreakderState(this);
         this.circuitBreakerConfig = config;
@@ -48,8 +46,8 @@ public class CounterCircuitBreaker implements CircuitBreaker{
 
     @Override
     public void reset() {
-        this.failureCount.set(0);
-        this.lastFailureTime = 0;
+       failureCounter.reset();
+       lastFailureTime = 0;
     }
 
     @Override
@@ -64,7 +62,7 @@ public class CounterCircuitBreaker implements CircuitBreaker{
 
     @Override
     public int failureCount() {
-        return this.failureCount.get();
+        return this.failureCounter.getCount();
     }
 
     @Override
@@ -74,7 +72,7 @@ public class CounterCircuitBreaker implements CircuitBreaker{
 
     @Override
     public void incrementFailureCount() {
-        this.failureCount.incrementAndGet();
+        this.failureCounter.record();
         this.lastFailureTime = System.currentTimeMillis();
     }
 

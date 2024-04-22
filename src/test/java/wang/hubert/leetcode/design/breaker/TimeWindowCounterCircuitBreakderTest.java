@@ -3,15 +3,17 @@ package wang.hubert.leetcode.design.breaker;
 import org.junit.Test;
 
 import wang.hubert.leetcode.design.breaker.counter.CounterCircuitBreaker;
+import wang.hubert.leetcode.design.breaker.counter.TimeWindowCounter;
 
-public class CounterCircuitBreakerStateTest {
+public class TimeWindowCounterCircuitBreakderTest {
+
 
     @Test
     public void testCall() {
         CircuitBreakerConfig config = new CircuitBreakerConfig();
         config.setFailureThreshold(10);
         config.setTimeout(1000);
-        CircuitBreaker breaker = new CounterCircuitBreaker(config);
+        CircuitBreaker breaker = new CounterCircuitBreaker(config, new TimeWindowCounter(60000));
 
         for (int i = 0; i < 200; i++) {
             try {
