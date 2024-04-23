@@ -2,17 +2,17 @@ package wang.hubert.leetcode.design.raft.core;
 
 public class RaftNode {
 
-    private String id;
+    private int id;
 
     /**
      * 当前任期
      */
-    private int ccurrrentTerm;
+    private int currentTerm;
     
     /**
      * 投给谁了
      */
-    private String votedFor;
+    private int votedFor;
 
     /**
      * 当前状态
@@ -27,13 +27,15 @@ public class RaftNode {
     /**
      * 消息发送器
      */
-    private ImessageSender messageSender;
+    private RaftTransport messageSender;
+
+    private RaftConfiguration raftConfiguration;
 
 
-    public RaftNode(IRaftLog raftLog, ImessageSender messageSender, RaftConfiguration configuration) {
+    public RaftNode(IRaftLog raftLog, RaftTransport messageSender, RaftConfiguration configuration) {
         this.id = configuration.getNodeId();
-        this.ccurrrentTerm = 0;
-        this.votedFor = "";
+        this.currentTerm = 0;
+        this.votedFor = 0;
         this.raftLog = raftLog;
         this.messageSender = messageSender;
         this.currentState = new FollowerState(this, messageSender);
@@ -61,20 +63,6 @@ public class RaftNode {
     }
 
 
-    public int getCcurrrentTerm() {
-        return ccurrrentTerm;
-    }
-
-
-    public String getVotedFor() {
-        return votedFor;
-    }
-
-
-    public void setVotedFor(String votedFor) {
-        this.votedFor = votedFor;
-    }
-
 
     public IState getCurrentState() {
         return currentState;
@@ -88,13 +76,67 @@ public class RaftNode {
     }
 
 
-    public ImessageSender getMessageSender() {
+    public RaftTransport getMessageSender() {
         return messageSender;
     }
-    
-    public String getId() {
+
+    public int getId() {
         return this.id;
     }
+
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setCurrentState(IState currentState) {
+        this.currentState = currentState;
+    }
+
+
+    public void setRaftLog(IRaftLog raftLog) {
+        this.raftLog = raftLog;
+    }
+
+
+    public void setMessageSender(RaftTransport messageSender) {
+        this.messageSender = messageSender;
+    }
+
+
+    public RaftConfiguration getRaftConfiguration() {
+        return raftConfiguration;
+    }
+
+
+
+
+
+    public void setRaftConfiguration(RaftConfiguration raftConfiguration) {
+        this.raftConfiguration = raftConfiguration;
+    }
+
+
+    public int getCurrentTerm() {
+        return currentTerm;
+    }
+
+
+    public void setCurrentTerm(int currentTerm) {
+        this.currentTerm = currentTerm;
+    }
+
+
+    public int getVotedFor() {
+        return votedFor;
+    }
+
+
+    public void setVotedFor(int votedFor) {
+        this.votedFor = votedFor;
+    }
+    
+    
     
 
 }

@@ -4,14 +4,12 @@ public abstract class RaftState implements IState{
 
     protected RaftNode raftNode;
 
-    protected ImessageSender messageSender;
+    protected RaftTransport transport;
 
 
-    public RaftState(RaftNode raftNode, ImessageSender mImessageSender) {
+    public RaftState(RaftNode raftNode, RaftTransport transport) {
         this.raftNode = raftNode;
-        this.messageSender = messageSender;
+        this.transport = transport;
     }
-
-
 
 }

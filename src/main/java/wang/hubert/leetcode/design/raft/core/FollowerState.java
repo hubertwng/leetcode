@@ -1,11 +1,14 @@
 package wang.hubert.leetcode.design.raft.core;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class FollowerState extends RaftState{
 
+    private Timer heartbeatTimer;
 
-
-    public FollowerState(RaftNode raftNode, ImessageSender mImessageSender) {
-        super(raftNode, mImessageSender);
+    public FollowerState(RaftNode raftNode, RaftTransport transport) {
+        super(raftNode, transport);
     }
 
 
@@ -13,20 +16,30 @@ public class FollowerState extends RaftState{
 
     @Override
     public void onEnterState() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onEnterState'");
+        resetHeartbeatTimer();
     }
 
     @Override
     public void onExitState() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onExitState'");
+        resetHeartbeatTimer();
     }
 
 
     private void resetHeartbeatTimer() {
-        
+        if (heartbeatTimer != null) {
+            heartbeatTimer.cancel();
+        }
+        heartbeatTimer.schedule( new TimerTask() {
+
+            @Override
+            public void run() {
+                System.out.println("Heartbeat missed in follower state, becoming candidate.");
+                raftNode.becomeCandidateState();
+            }
+            
+        }, raftNode.getRaftConfiguration().getElectionTimeout());
 
     }
+
 
 }

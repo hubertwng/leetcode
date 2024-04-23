@@ -12,12 +12,18 @@ public class RaftConfiguration {
     /**
      * 节点id
      */
-    private String nodeId;
+    private Integer nodeId;
 
     /**
      * peer 
      */
-    private List<String> peerIds;
+    private List<Peer> peers;
+
+
+    /**
+     * 心跳时间间隔
+     */
+    private int heartBeatsTime;
 
     public int getElectionTimeout() {
         return electionTimeout;
@@ -27,23 +33,29 @@ public class RaftConfiguration {
         this.electionTimeout = electionTimeout;
     }
 
-    public String getNodeId() {
+    public Integer getNodeId() {
         return nodeId;
     }
 
-    public void setNodeId(String nodeId) {
+    public void setNodeId(Integer nodeId) {
         this.nodeId = nodeId;
     }
 
-    public List<String> getPeerIds() {
-        return peerIds;
+    public List<Peer> getPeers() {
+        return peers;
     }
 
-    public void setPeerIds(List<String> peerIds) {
-        this.peerIds = peerIds;
+    public void setPeers(List<Peer> peers) {
+        this.peers = peers;
     }
 
+    public int getHeartBeatsTime() {
+        return heartBeatsTime;
+    }
+
+    public void setHeartBeatsTime(int heartBeatsTime) {
+        this.heartBeatsTime = heartBeatsTime;
+    }
     
-
     
 }

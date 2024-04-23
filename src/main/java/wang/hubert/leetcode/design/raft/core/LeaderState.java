@@ -1,22 +1,37 @@
 package wang.hubert.leetcode.design.raft.core;
 
-public class LeaderState extends RaftState{
+import java.util.Timer;
+import java.util.TimerTask;
 
-    public LeaderState(RaftNode raftNode, ImessageSender mImessageSender) {
-        super(raftNode, mImessageSender);
-        //TODO Auto-generated constructor stub
+public class LeaderState extends RaftState{
+    
+    private Timer heartbeatTimer;
+
+    public LeaderState(RaftNode raftNode, RaftTransport transport) {
+        super(raftNode,  transport);
     }
 
     @Override
     public void onEnterState() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onEnterState'");
+        sendHeartbeates();
     }
 
     @Override
     public void onExitState() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'onExitState'");
+        heartbeatTimer.cancel();
     }
 
+    private void sendHeartbeates() {
+        heartbeatTimer = new Timer();
+        heartbeatTimer.scheduleAtFixedRate(new TimerTask() {
+
+            @Override
+            public void run() {
+                // todo 需要定义CompletableFuture
+                raftNode.getRaftConfiguration().getPeers().
+                forEach(peer -> transport.sendAppendEntries(peer, AppendEntriesParams.heartbeatesParams(raftNode.getId(), raftNode.getCcurrrentTerm()), null));
+            }
+            
+        }, 0, raftNode.getRaftConfiguration().getHeartBeatsTime());
+    }
 }
