@@ -29,7 +29,7 @@ public class LeaderState extends RaftState{
             public void run() {
                 // todo 需要定义CompletableFuture
                 raftNode.getRaftConfiguration().getPeers().
-                forEach(peer -> transport.sendAppendEntries(peer, AppendEntriesParams.heartbeatesParams(raftNode.getId(), raftNode.getCcurrrentTerm()), null));
+                forEach(peer -> transport.sendAppendEntries(peer, AppendEntriesParams.heartbeatesParams(raftNode.getId(), raftNode.getCurrentTerm()), null));
             }
             
         }, 0, raftNode.getRaftConfiguration().getHeartBeatsTime());
