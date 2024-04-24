@@ -1,5 +1,6 @@
 package wang.hubert.leetcode.design.raft.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class AppendEntriesParams {
@@ -7,17 +8,24 @@ public class AppendEntriesParams {
     private int leaderId;
     private List<LogEntry> entries;
     private int leaderCommit;
+    private int lastLogIndex;
+    private int lastLogTerm;
 
-    public static AppendEntriesParams heartbeatesParams(int leaderId, int term) {
-        return new AppendEntriesParams(term, leaderId, null, 0);
+    public static AppendEntriesParams heartbeatesParams(int term, int leaderId, int lastLogIndex, int lastLogTerm) {
+        return new AppendEntriesParams(term, leaderId, new ArrayList<>(), lastLogIndex, lastLogIndex, lastLogTerm);
     }
 
-    public AppendEntriesParams(int term, int leaderId, List<LogEntry> entries, int leaderCommit) {
+   
+    public AppendEntriesParams(int term, int leaderId, List<LogEntry> entries, int leaderCommit, int lastLogIndex,
+            int lastLogTerm) {
         this.term = term;
         this.leaderId = leaderId;
         this.entries = entries;
         this.leaderCommit = leaderCommit;
+        this.lastLogIndex = lastLogIndex;
+        this.lastLogTerm = lastLogTerm;
     }
+
 
     public int getTerm() {
         return term;
@@ -49,6 +57,22 @@ public class AppendEntriesParams {
 
     public void setLeaderCommit(int leaderCommit) {
         this.leaderCommit = leaderCommit;
+    }
+
+    public int getLastLogIndex() {
+        return lastLogIndex;
+    }
+
+    public int getLastLogTerm() {
+        return lastLogTerm;
+    }
+
+    public void setLastLogIndex(int lastLogIndex) {
+        this.lastLogIndex = lastLogIndex;
+    }
+
+    public void setLastLogTerm(int lastLogTerm) {
+        this.lastLogTerm = lastLogTerm;
     }
 
     

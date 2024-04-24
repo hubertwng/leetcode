@@ -8,11 +8,13 @@ import wang.hubert.leetcode.design.raft.core.RaftServerProtocol;
 import wang.hubert.leetcode.design.raft.core.RequestVoteParams;
 import wang.hubert.leetcode.design.raft.core.VoteResponse;
 
-public class SimpleRaftServerProtocol implements RaftServerProtocol{
+public class SimpleRaftServer implements RaftServerProtocol{
 
     private RaftNode raftNode;
 
+    
 
+    
     @Override
     public VoteResponse sendRequestVote(Peer peer, RequestVoteParams params) {
         return raftNode.getCurrentState().handleRequestVote(params);
@@ -21,6 +23,10 @@ public class SimpleRaftServerProtocol implements RaftServerProtocol{
     @Override
     public AppendEntriesResponse sendAppendEntries(Peer peer, AppendEntriesParams appendEntriesParams) {
         return raftNode.getCurrentState().handleAppendEntries(appendEntriesParams);
+    }
+
+    public SimpleRaftServer(RaftNode raftNode) {
+        this.raftNode = raftNode;
     }
 
 }

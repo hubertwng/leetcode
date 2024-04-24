@@ -78,8 +78,13 @@ public class FollowerState extends RaftState{
 
     @Override
     public AppendEntriesResponse handleAppendEntries(AppendEntriesParams params) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'handleAppendEntries'");
+        
+        if (params.getLeaderId() != raftNode.getVotedFor()) {
+            return new AppendEntriesResponse(false, raftNode.getCurrentTerm());
+        }
+        resetHeartbeatTimer();
+        params.getEntries().forEach(raftNode.getRaftLog()::appendEntry);
+        return new AppendEntriesResponse(true, raftNode.getCurrentTerm());
     }
 
 

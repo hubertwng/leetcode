@@ -2,6 +2,7 @@ package wang.hubert.leetcode.design.raft.core;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CompletableFuture;
 
 public class LeaderState extends RaftState{
     
@@ -23,13 +24,23 @@ public class LeaderState extends RaftState{
 
     private void sendHeartbeates() {
         heartbeatTimer = new Timer();
+        CompletableFuture<AppendEntriesResponse> future = new CompletableFuture<>();
+        future.thenAccept(appendEntriesResponse -> {
+            if (!appendEntriesResponse.isSuccess() && raftNode.getCurrentTerm() < appendEntriesResponse.getTerm()) {
+                raftNode.setCurrentTerm(appendEntriesResponse.getTerm());
+                raftNode.setVotedFor(0);
+                raftNode.becomeFollower();
+            }
+        });
+        LogEntry lasEntry = raftNode.getRaftLog().getLastEntry();
+        AppendEntriesParams params = AppendEntriesParams.heartbeatesParams(raftNode.getId(), raftNode.getCurrentTerm(), raftNode.getRaftLog().getLastIndex(), lasEntry.getTerm());
         heartbeatTimer.scheduleAtFixedRate(new TimerTask() {
 
             @Override
             public void run() {
                 // todo 需要定义CompletableFuture
                 raftNode.getRaftConfiguration().getPeers().
-                forEach(peer -> transport.sendAppendEntries(peer, AppendEntriesParams.heartbeatesParams(raftNode.getId(), raftNode.getCurrentTerm()), null));
+                forEach(peer -> transport.sendAppendEntries(peer,params, future));
             }
             
         }, 0, raftNode.getRaftConfiguration().getHeartBeatsTime());
@@ -65,7 +76,19 @@ public class LeaderState extends RaftState{
 
     @Override
     public AppendEntriesResponse handleAppendEntries(AppendEntriesParams params) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'handleAppendEntries'");
+        if (params.getTerm() < raftNode.getCurrentTerm() ) {
+            // 对方任期小于当前任期，拒绝请求
+            return new AppendEntriesResponse(false, raftNode.getCurrentTerm());
+        } else if(params.getTerm() == raftNode.getCurrentTerm()) {
+                // 出现意外情况，两个 Leader 拥有相同的任期
+                System.err.println("Conflict: two leaders with the same term");
+                return new AppendEntriesResponse(false, raftNode.getCurrentTerm());
+        } else {
+             // 对方任期大于当前任期，退回到 Follower 状态
+             raftNode.setCurrentTerm(params.getTerm());
+             raftNode.becomeFollower();
+             raftNode.setVotedFor(0);
+             return new AppendEntriesResponse(true, raftNode.getCurrentTerm());
+        }
     }
 }

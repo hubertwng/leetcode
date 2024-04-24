@@ -22,6 +22,11 @@ public class Peer {
         this.address = address;
     }
 
+    public Peer(int id, String address) {
+        this.id = id;
+        this.address = address;
+    }
+
     
 
 }

@@ -40,6 +40,7 @@ public class RaftNode {
         this.messageSender = messageSender;
         this.currentState = new FollowerState(this, messageSender);
         this.currentState.onEnterState();
+        this.raftConfiguration = configuration;
     }
 
 
@@ -63,57 +64,13 @@ public class RaftNode {
     }
 
 
-
-    public RaftState getCurrentState() {
-        return currentState;
-    }
-
-
-
-
-    public IRaftLog getRaftLog() {
-        return raftLog;
-    }
-
-
-    public RaftTransport getMessageSender() {
-        return messageSender;
-    }
-
     public int getId() {
-        return this.id;
+        return id;
     }
 
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public void setCurrentState(RaftState currentState) {
-        this.currentState = currentState;
-    }
-
-
-    public void setRaftLog(IRaftLog raftLog) {
-        this.raftLog = raftLog;
-    }
-
-
-    public void setMessageSender(RaftTransport messageSender) {
-        this.messageSender = messageSender;
-    }
-
-
-    public RaftConfiguration getRaftConfiguration() {
-        return raftConfiguration;
-    }
-
-
-
-
-
-    public void setRaftConfiguration(RaftConfiguration raftConfiguration) {
-        this.raftConfiguration = raftConfiguration;
     }
 
 
@@ -135,8 +92,47 @@ public class RaftNode {
     public void setVotedFor(int votedFor) {
         this.votedFor = votedFor;
     }
-    
-    
+
+
+    public RaftState getCurrentState() {
+        return currentState;
+    }
+
+
+    public void setCurrentState(RaftState currentState) {
+        this.currentState = currentState;
+    }
+
+
+    public IRaftLog getRaftLog() {
+        return raftLog;
+    }
+
+
+    public void setRaftLog(IRaftLog raftLog) {
+        this.raftLog = raftLog;
+    }
+
+
+    public RaftTransport getMessageSender() {
+        return messageSender;
+    }
+
+
+    public void setMessageSender(RaftTransport messageSender) {
+        this.messageSender = messageSender;
+    }
+
+
+    public RaftConfiguration getRaftConfiguration() {
+        return raftConfiguration;
+    }
+
+
+    public void setRaftConfiguration(RaftConfiguration raftConfiguration) {
+        this.raftConfiguration = raftConfiguration;
+    }
+   
     
 
 }

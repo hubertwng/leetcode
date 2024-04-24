@@ -91,7 +91,6 @@ public VoteResponse handleRequestVote(RequestVoteParams params) {
 
 @Override
 public AppendEntriesResponse handleAppendEntries(AppendEntriesParams params) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'handleAppendEntries'");
+    return new AppendEntriesResponse(false, raftNode.getCurrentTerm());
 }
 }
