@@ -3,10 +3,10 @@ package wang.hubert.leetcode.design.raft.core;
 import java.util.List;
 
 public class AppendEntriesParams {
-    public  int term;
-    public  int leaderId;
-    public  List<LogEntry> entries;
-    public  int leaderCommit;
+    private int term;
+    private int leaderId;
+    private List<LogEntry> entries;
+    private int leaderCommit;
 
     public static AppendEntriesParams heartbeatesParams(int leaderId, int term) {
         return new AppendEntriesParams(term, leaderId, null, 0);

@@ -8,7 +8,7 @@ public interface IRaftLog {
 
     int getLastIndex();
 
-    int getLastTerm();
+    LogEntry getLastEntry();
 
     List<LogEntry> getEntriesFrom(int index);
 

@@ -17,7 +17,7 @@ public class RaftNode {
     /**
      * 当前状态
      */
-    private IState currentState;
+    private RaftState currentState;
 
     /**
      * 日志记录器
@@ -56,7 +56,7 @@ public class RaftNode {
     }
 
 
-    public void transitionTo(IState newState) {
+    public void transitionTo(RaftState newState) {
         this.currentState.onExitState();
         this.currentState = newState;
         this.currentState.onEnterState();
@@ -64,7 +64,7 @@ public class RaftNode {
 
 
 
-    public IState getCurrentState() {
+    public RaftState getCurrentState() {
         return currentState;
     }
 
@@ -89,7 +89,7 @@ public class RaftNode {
         this.id = id;
     }
 
-    public void setCurrentState(IState currentState) {
+    public void setCurrentState(RaftState currentState) {
         this.currentState = currentState;
     }
 

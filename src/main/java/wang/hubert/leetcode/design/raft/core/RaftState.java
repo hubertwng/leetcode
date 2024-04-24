@@ -12,4 +12,9 @@ public abstract class RaftState implements IState{
         this.transport = transport;
     }
 
+    
+    public abstract VoteResponse handleRequestVote(RequestVoteParams params);
+    
+    public abstract AppendEntriesResponse handleAppendEntries(AppendEntriesParams params);
+
 }

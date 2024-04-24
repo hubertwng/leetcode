@@ -1,10 +1,10 @@
 package wang.hubert.leetcode.design.raft.core;
 
 public class RequestVoteParams {
-    public  int term;
-    public  int candidateId;
-    public  int lastLogIndex;
-    public  int lastLogTerm;
+    private int term;
+    private int candidateId;
+    private int lastLogIndex;
+    private int lastLogTerm;
     public int getTerm() {
         return term;
     }

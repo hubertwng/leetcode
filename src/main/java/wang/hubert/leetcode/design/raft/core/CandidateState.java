@@ -30,7 +30,7 @@ public void onExitState() {
             raftNode.getCurrentTerm(),
             raftNode.getId(),
             raftNode.getRaftLog().getLastIndex(),
-            raftNode.getRaftLog().getLastTerm()
+            raftNode.getRaftLog().getLastEntry().getTerm()
         );
 
 
@@ -60,5 +60,38 @@ public void onExitState() {
             raftNode.becomeLeader();
         }
     }
+}
+
+@Override
+public VoteResponse handleRequestVote(RequestVoteParams params) {
+    // 如果请求的任期小于当前任期，拒绝投票
+    if (params.getTerm() < raftNode.getCurrentTerm()) {
+        return new VoteResponse(false, raftNode.getCurrentTerm(), raftNode.getId());
+    }
+
+    // 请求的任期更高，变回Follower
+    if (params.getTerm() > raftNode.getCurrentTerm()) {
+        raftNode.setCurrentTerm(params.getTerm());
+        raftNode.setVotedFor(0);
+        raftNode.becomeFollower();
+    }
+
+    // 检查日志至少一样新
+    boolean logIsAtLeastAsUpToDate = (params.getLastLogTerm() > raftNode.getRaftLog().getLastEntry().getTerm()) ||
+    (params.getLastLogTerm() == raftNode.getRaftLog().getLastEntry().getTerm() && params.getLastLogIndex() >= raftNode.getRaftLog().getLastIndex());
+
+    // 如果没有投票给其他候选人，并且日志足够新
+    if (raftNode.getVotedFor() == 0 && logIsAtLeastAsUpToDate) {
+        raftNode.setVotedFor(params.getCandidateId());
+        return new VoteResponse(true, raftNode.getCurrentTerm(), raftNode.getId());
+    }
+
+    return new VoteResponse(true, raftNode.getCurrentTerm(), raftNode.getId());
+}
+
+@Override
+public AppendEntriesResponse handleAppendEntries(AppendEntriesParams params) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'handleAppendEntries'");
 }
 }

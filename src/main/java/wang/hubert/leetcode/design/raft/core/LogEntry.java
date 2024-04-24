@@ -3,6 +3,7 @@ package wang.hubert.leetcode.design.raft.core;
 public class LogEntry {
     
     private  int term;
+    
     private String command;
 
     public LogEntry(int term, String command) {
