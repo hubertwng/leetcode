@@ -1,14 +1,16 @@
-package wang.hubert.leetcode.design.raft.core;
-
-import java.util.Timer;
-import java.util.TimerTask;
+package wang.hubert.leetcode.design.raft;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class FollowerState extends RaftState{
 
-    private Timer heartbeatTimer;
+    private ScheduledExecutorService electionTimeoutScheduledExecutorService;
+    private ScheduledFuture<?> electionTimeoutFuture;
 
-    public FollowerState(RaftNode raftNode, RaftTransport transport) {
+    public FollowerState(RaftNode raftNode, RaftTransport transport, ScheduledExecutorService electionTimeoutScheduledExecutorService) {
         super(raftNode, transport);
+        this.electionTimeoutScheduledExecutorService = electionTimeoutScheduledExecutorService;
     }
 
 
@@ -16,29 +18,29 @@ public class FollowerState extends RaftState{
 
     @Override
     public void onEnterState() {
-        resetHeartbeatTimer();
+        String format = "RaftNode[%d] became follower at currentTerm:%d";
+        System.out.println(String.format(format, raftNode.getId(), raftNode.getCurrentTerm()));
+        resetElectionTimer();
     }
 
     @Override
     public void onExitState() {
-        resetHeartbeatTimer();
+        if (electionTimeoutFuture != null && !electionTimeoutFuture.isDone()) {
+            electionTimeoutFuture.cancel(false);
+        }
     }
 
 
-    private void resetHeartbeatTimer() {
-        if (heartbeatTimer != null) {
-            heartbeatTimer.cancel();
+    private void resetElectionTimer() {
+        if (electionTimeoutFuture != null && !electionTimeoutFuture.isDone()) {
+            electionTimeoutFuture.cancel(false);
         }
-        heartbeatTimer.schedule( new TimerTask() {
 
-            @Override
-            public void run() {
-                System.out.println("Heartbeat missed in follower state, becoming candidate.");
-                raftNode.becomeCandidateState();
-            }
-            
-        }, raftNode.getRaftConfiguration().getElectionTimeout());
-
+        this.electionTimeoutFuture = electionTimeoutScheduledExecutorService.schedule(() -> {
+            String format = "RaftNode[%d] Heartbeat missed in follower state, becoming candidate.";
+            System.out.println(String.format(format, raftNode.getId()));
+            raftNode.becomeCandidateState();
+        }, raftNode.randomElectionTimeout(), TimeUnit.MILLISECONDS);
     }
 
 
@@ -78,14 +80,20 @@ public class FollowerState extends RaftState{
 
     @Override
     public AppendEntriesResponse handleAppendEntries(AppendEntriesParams params) {
-        
-        if (params.getLeaderId() != raftNode.getVotedFor()) {
+        if (params.getTerm() < raftNode.getCurrentTerm()) {
             return new AppendEntriesResponse(false, raftNode.getCurrentTerm());
         }
-        resetHeartbeatTimer();
+        if (params.getTerm() == raftNode.getCurrentTerm() && params.getLeaderId() != raftNode.getVotedFor()) {
+            return new AppendEntriesResponse(false, raftNode.getCurrentTerm());
+        }
+        resetElectionTimer();
+        if (params.getLeaderId() == raftNode.getId()) {
+            System.out.println();
+        }
+        String formant = "RaftNode[%d]Follower receive a entry and reset election time at term[%d] leader[%d]";
+        System.out.println(String.format(formant, raftNode.getId(), raftNode.getCurrentTerm(), params.getLeaderId()));
         params.getEntries().forEach(raftNode.getRaftLog()::appendEntry);
         return new AppendEntriesResponse(true, raftNode.getCurrentTerm());
     }
-
 
 }

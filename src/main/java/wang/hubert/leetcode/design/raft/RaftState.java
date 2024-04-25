@@ -1,4 +1,4 @@
-package wang.hubert.leetcode.design.raft.core;
+package wang.hubert.leetcode.design.raft;
 
 public abstract class RaftState implements IState{
 
